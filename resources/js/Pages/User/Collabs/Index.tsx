@@ -98,6 +98,14 @@ export default function Index({ collabs }: Props) {
                                                         </DialogHeader>
                                                         <div className="space-y-4">
                                                             <div>
+                                                                <h4 className="text-sm font-medium text-gray-300">Creator</h4>
+                                                                <p className="mt-1 text-sm text-gray-400">{collab.creator.name}</p>
+                                                            </div>
+                                                            <div>
+                                                                <h4 className="text-sm font-medium text-gray-300">Partner</h4>
+                                                                <p className="mt-1 text-sm text-gray-400">{collab.partner?.name}</p>
+                                                            </div>
+                                                            <div>
                                                                 <h4 className="text-sm font-medium text-gray-300">Description</h4>
                                                                 <p className="mt-1 text-sm text-gray-400">{collab.description}</p>
                                                             </div>
@@ -108,7 +116,7 @@ export default function Index({ collabs }: Props) {
                                                                 </Badge>
                                                             </div>
                                                             <div>
-                                                                <h4 className="text-sm font-medium text-gray-300">Created</h4>
+                                                                <h4 className="text-sm font-medium text-gray-300">Created at</h4>
                                                                 <p className="mt-1 text-sm text-gray-400">
                                                                     {new Date(collab.created_at).toLocaleDateString()}
                                                                 </p>

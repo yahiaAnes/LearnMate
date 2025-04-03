@@ -57,7 +57,7 @@ Route::middleware('auth')->group(function () {
 
     // Collaboration routes
     Route::resource('collabs', CollabController::class);
-
+    Route::post('/collabs/{collab}/accept', [CollabController::class, 'accept'])->name('collabs.accept');
     // Requests routes
     Route::resource('requests', RequestController::class);
     Route::post('/requests/store', [RequestController::class, 'store'])->name('requests.store');
@@ -67,6 +67,7 @@ Route::middleware('auth')->group(function () {
     // Responses routes
     Route::resource('responses', ResponseController::class);
     Route::post('/responses/{response}/cancel', [ResponseController::class, 'cancel'])->name('responses.cancel');
+    Route::post('/responses/{response}/review', [ResponseController::class, 'review'])->name('responses.review');
 });
 
 Route::get('/CompleteInfo',[UserController::class, 'CompleteInfo'])->middleware(['auth'])->name('CompleteInfo');

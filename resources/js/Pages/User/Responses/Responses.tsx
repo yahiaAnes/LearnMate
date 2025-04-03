@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, usePage, router } from '@inertiajs/react';
+import { Head, usePage, router, useForm } from '@inertiajs/react';
 import { useState, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card';
 import { Input } from '@/Components/ui/input';
@@ -7,9 +7,10 @@ import { Button } from '@/Components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/Components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar';
 import { Badge } from '@/Components/ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/Components/ui/dialog';
-import { Search, Filter, Users, Calendar, Clock, MessageSquare, BookOpen, FileText } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/Components/ui/dialog';
+import { Search, Filter, Users, Calendar, Clock, MessageSquare, BookOpen, FileText, Star } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { Textarea } from '@/Components/ui/textarea';
 
 interface User {
     id: number;
@@ -32,12 +33,15 @@ interface Request {
     partner_id: number;
     partner?: User;
     user?: User;
+    review: number;
+    comment: string;
 }
 
 const requestStatuses = {
     pending: 'Pending',
     accepted: 'Accepted',
     rejected: 'Rejected',
+    scheduled: 'Scheduled',
     completed: 'Completed',
     cancelled: 'Cancelled'
 };
@@ -46,6 +50,9 @@ export default function Responses() {
     const { requests = [], auth } = usePage().props as unknown as { requests: Request[]; auth: { user: User } };
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('all');
+    const [rating, setRating] = useState(0);
+    const [comment, setComment] = useState('');
+    const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false);
 
     const filteredRequests = useMemo(() => {
         let filtered = [...requests];
@@ -76,6 +83,21 @@ export default function Responses() {
             preserveScroll: true,
             onSuccess: () => {
               
+            },
+        });
+    };
+
+    const { post, data, setData, processing, errors, reset } = useForm({
+        review: 0,
+        comment: '',
+    });
+
+    const handleReview = (requestId: number) => {
+        post(route('responses.review', requestId), {
+            preserveScroll: true,
+            onSuccess: () => {
+                reset();
+                setIsReviewDialogOpen(false);
             },
         });
     };
@@ -136,6 +158,7 @@ export default function Responses() {
                                             <Badge variant="secondary" className={`${
                                                 request.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' :
                                                 request.status === 'accepted' ? 'bg-green-500/20 text-green-400 border-green-500/30' :
+                                                request.status === 'scheduled' ? 'bg-green-500/20 text-green-400 border-green-500/30' :
                                                 request.status === 'rejected' ? 'bg-red-500/20 text-red-400 border-red-500/30' :
                                                 request.status === 'completed' ? 'bg-blue-500/20 text-blue-400 border-blue-500/30' :
                                                 'bg-gray-500/20 text-gray-400 border-gray-500/30'
@@ -154,6 +177,16 @@ export default function Responses() {
                                                 {request.description.split(' ').slice(0, 10).join(' ')}
                                                 {request.description.split(' ').length > 10 ? '...' : ''}
                                             </p>
+                                            
+                                            {request.review && (
+                                                <div className="bg-gray-700/50 p-4 rounded-lg space-y-3">
+                                                    <div className="flex items-center space-x-2">
+                                                        <Star className="text-yellow-400" size={16} />
+                                                        <span className="text-gray-300">Rating: {request.review}/5</span>
+                                                    </div>
+                                                    <p className="text-gray-300 text-sm">{request.comment}</p>
+                                                </div>
+                                            )}
                                             
                                             <div className="flex items-center space-x-2">
                                                 <Clock className="text-blue-400" size={16} />
@@ -217,6 +250,67 @@ export default function Responses() {
                                                     >
                                                         Cancel
                                                     </Button>
+                                                )}
+                                                {(request.status === 'accepted' || request.status === 'scheduled') && (
+                                                    <Dialog open={isReviewDialogOpen} onOpenChange={setIsReviewDialogOpen}>
+                                                        <DialogTrigger asChild>
+                                                            <Button 
+                                                                className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                                                            >
+                                                                {request.review ? 'Edit Review' : 'Review Session'}
+                                                            </Button>
+                                                        </DialogTrigger>
+                                                        <DialogContent className="bg-gray-800 border-gray-700">
+                                                            <DialogHeader>
+                                                                <DialogTitle className="text-white">
+                                                                    {request.review ? 'Edit Review' : 'Review Session'}
+                                                                </DialogTitle>
+                                                                <DialogDescription className="text-gray-400">
+                                                                    Rate your experience and provide feedback
+                                                                </DialogDescription>
+                                                            </DialogHeader>
+                                                            <div className="space-y-4 py-4">
+                                                                <div className="flex items-center space-x-2">
+                                                                    {[1, 2, 3, 4, 5].map((star) => (
+                                                                        <button
+                                                                            key={star}
+                                                                            onClick={() => setData('review', star)}
+                                                                            className="focus:outline-none"
+                                                                        >
+                                                                            <Star
+                                                                                className={`w-8 h-8 ${
+                                                                                    star <= data.review
+                                                                                        ? 'fill-yellow-400 text-yellow-400'
+                                                                                        : 'text-gray-400'
+                                                                                }`}
+                                                                            />
+                                                                        </button>
+                                                                    ))}
+                                                                </div>
+                                                                {errors.review && (
+                                                                    <p className="text-red-500 text-sm">{errors.review}</p>
+                                                                )}
+                                                                <Textarea
+                                                                    placeholder="Write your review here..."
+                                                                    value={data.comment}
+                                                                    onChange={(e) => setData('comment', e.target.value)}
+                                                                    className="bg-gray-700 border-gray-600 text-gray-300 focus:border-blue-500 min-h-[100px]"
+                                                                />
+                                                                {errors.comment && (
+                                                                    <p className="text-red-500 text-sm">{errors.comment}</p>
+                                                                )}
+                                                            </div>
+                                                            <DialogFooter>
+                                                                <Button
+                                                                    onClick={() => handleReview(request.id)}
+                                                                    disabled={processing || data.review === 0 || !data.comment.trim()}
+                                                                    className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                                                                >
+                                                                    {processing ? 'Submitting...' : request.review ? 'Update Review' : 'Submit Review'}
+                                                                </Button>
+                                                            </DialogFooter>
+                                                        </DialogContent>
+                                                    </Dialog>
                                                 )}
                                             </div>
                                         </div>

@@ -195,6 +195,15 @@ export default function SearchPartner() {
         });
     };
 
+    //accept collab
+    const handleAcceptCollab = (collabId: number) => {
+        post(route('collabs.accept', collabId), {
+            onSuccess: () => {
+               
+            },
+        });
+    };
+
     return (
         <AuthenticatedLayout
             header={
@@ -457,7 +466,7 @@ export default function SearchPartner() {
                                                     <div className="flex justify-end space-x-2 pt-4">
                                                         <Dialog>
                                                             <DialogTrigger asChild>
-                                                                <Button variant="outline" className="text-gray-300 border-gray-600 hover:bg-gray-700">
+                                                                <Button variant="outline" className="text-black border-gray-600 hover:bg-gray-700">
                                                                     View Details
                                                                 </Button>
                                                             </DialogTrigger>
@@ -484,11 +493,17 @@ export default function SearchPartner() {
                                                                 </div>
                                                             </DialogContent>
                                                         </Dialog>
-                                                        {collab.status === 'pending' && (
-                                                            <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-300">
-                                                                Accept
-                                                            </Button>
-                                                        )}
+                                                        {collab.creator.id != auth.user.id ? (
+                                                            collab.status === 'pending' && (
+                                                                <Button 
+                                                                    onClick={() => handleAcceptCollab(collab.id)}
+                                                                    className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                                                                >
+                                                                    Accept
+                                                                </Button>
+                                                            )
+                                                        ) : null}
+                                                        
                                                     </div>
                                                 </div>
                                             </CardContent>

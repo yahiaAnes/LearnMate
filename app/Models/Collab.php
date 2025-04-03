@@ -15,6 +15,8 @@ class Collab extends Model
         'type',
         'subject',
         'description',
+        'comment',
+        'review'
     ];
 
     public function creator()

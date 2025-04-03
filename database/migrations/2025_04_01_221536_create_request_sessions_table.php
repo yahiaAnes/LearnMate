@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('subject');
             $table->string('description');
             $table->string('status')->default('pending');
-            $table->string('comment')->nullable();
+            $table->text('comment')->nullable();
             $table->string('review')->nullable();
             $table->string('time');
             $table->string('user_id')->constrained('users');

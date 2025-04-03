@@ -28,4 +28,15 @@ class ResponseController extends Controller
 
         return back()->with('success', 'Request cancelled successfully.');
     }
+
+    public function review(RequestSession $response, Request $request)
+    {
+        $response->update([
+            'review' => $request->review,
+            'comment' => $request->comment,
+            'status' => 'completed',
+        ]);
+
+        return back()->with('success', 'Review submitted successfully.');
+    }
 }

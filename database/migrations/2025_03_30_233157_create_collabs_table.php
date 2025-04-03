@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('type');
             $table->string('subject');
             $table->text('description');
+            $table->text('comment')->nullable();
+            $table->string('review')->nullable();
             $table->timestamps();
         });
     }

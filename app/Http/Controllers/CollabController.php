@@ -81,4 +81,14 @@ class CollabController extends Controller
         return redirect()->route('collabs.index')
             ->with('success', 'Collaboration deleted successfully');
     }
+
+    public function accept(Collab $collab)
+    {
+        $collab->update([
+            'status' => 'accepted',
+            'partner_id' => auth()->id(),
+        ]);
+        
+        return redirect()->back();
+    }   
 } 

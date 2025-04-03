@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar';
 import { Badge } from '@/Components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/Components/ui/dialog';
-import { Search, Filter, Users, Calendar, Clock, MessageSquare, BookOpen, FileText } from 'lucide-react';
+import { Search, Filter, Users, Calendar, Clock, MessageSquare, BookOpen, FileText, Star } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 interface User {
@@ -30,6 +30,8 @@ interface Request {
     created_at: string;
     user_id: number;
     partner_id: number;
+    review: number;
+    comment: string;
     partner?: User;
     user?: User;
 }
@@ -38,8 +40,8 @@ const requestStatuses = {
     pending: 'Pending',
     accepted: 'Accepted',
     rejected: 'Rejected',
-    completed: 'Completed',
-    cancelled: 'Cancelled'
+    scheduled: 'Scheduled',
+    completed: 'Completed'
 };
 
 export default function Requests() {
@@ -158,6 +160,15 @@ export default function Requests() {
                                     </CardHeader>
                                     <CardContent>
                                         <div className="space-y-4">
+                                            {request.review && (
+                                                <div className="bg-gray-700/50 p-4 rounded-lg space-y-3">
+                                                    <div className="flex items-center space-x-2">
+                                                        <Star className="text-yellow-400" size={16} />
+                                                        <span className="text-gray-300">Rating: {request.review}/5</span>
+                                                    </div>
+                                                    <p className="text-gray-300 text-sm">{request.comment}</p>
+                                                </div>
+                                            )}
                                             <p className="text-gray-300 text-sm">{request.description}</p>
                                             
                                             <div className="flex items-center space-x-2">
@@ -185,7 +196,7 @@ export default function Requests() {
                                             <div className="flex justify-end space-x-2 pt-4">
                                                 <Dialog>
                                                     <DialogTrigger asChild>
-                                                        <Button variant="outline" className="text-gray-300 border-gray-600 hover:bg-gray-700">
+                                                        <Button variant="outline" className="text-black border-gray-600 hover:bg-gray-700">
                                                             View Details
                                                         </Button>
                                                     </DialogTrigger>
