@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Collab;
+use App\Models\RequestSession;
 
 class UserController extends Controller
 {
@@ -58,4 +59,26 @@ class UserController extends Controller
             'collabs' => $collabs
         ]);
     }
+
+    public function profile($user)
+    {
+        $user = User::findOrFail($user);
+
+        $collabs = Collab::where('creator_id', $user->id)
+            ->orWhere('partner_id', $user->id)
+            ->with(['creator', 'partner'])
+            ->get();
+        
+        $requests = RequestSession::where('user_id', $user->id)
+            ->orWhere('partner_id', $user->id)
+            ->with(['user', 'partner'])
+            ->get();
+
+        return Inertia::render('User/Profile/Profile', [
+            'user' => $user,
+            'collabs' => $collabs,
+            'requests' => $requests,
+        ]);
+    }
+
 }

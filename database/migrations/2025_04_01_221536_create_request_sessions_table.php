@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('request_sessions', function (Blueprint $table) {
             $table->id();
             $table->string('subject');
-            $table->string('description');
+            $table->text('description');
             $table->string('status')->default('pending');
             $table->text('comment')->nullable();
             $table->string('review')->nullable();

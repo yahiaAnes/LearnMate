@@ -12,6 +12,7 @@ import { Star, Clock, BookOpen, MessageSquare, Filter, Search, Users, Calendar }
 import { formatDistanceToNow } from 'date-fns';
 import { Label } from '@/Components/ui/label';
 import { Textarea } from '@/Components/ui/textarea';
+import { Link } from '@inertiajs/react';
 
 interface User {
     id: number;
@@ -335,35 +336,11 @@ export default function SearchPartner() {
                                                     </Badge>
                                                 </div>
                                                 <div className="flex justify-between items-center pt-4">
-                                                    <Dialog>
-                                                        <DialogTrigger asChild>
-                                                            <Button variant="outline" className="text-gray-300 border-gray-600 hover:bg-gray-700">
-                                                                View Profile
-                                                            </Button>
-                                                        </DialogTrigger>
-                                                        <DialogContent className="bg-gray-800 border-gray-700">
-                                                            <DialogHeader>
-                                                                <DialogTitle className="text-white">{user.name}'s Profile</DialogTitle>
-                                                                <DialogDescription className="text-gray-400">
-                                                                    {user.bio || 'No bio available'}
-                                                                </DialogDescription>
-                                                            </DialogHeader>
-                                                            <div className="space-y-4">
-                                                                <div className="flex items-center space-x-2">
-                                                                    <BookOpen className="text-blue-400" size={16} />
-                                                                    <span className="text-gray-300">{user.speciality}</span>
-                                                                </div>
-                                                                <div className="flex items-center space-x-2">
-                                                                    <MessageSquare className="text-green-400" size={16} />
-                                                                    <span className="text-gray-300">{user.email}</span>
-                                                                </div>
-                                                                <div className="flex items-center space-x-2">
-                                                                    <Filter className="text-purple-400" size={16} />
-                                                                    <span className="text-gray-300">Level: {user.level}</span>
-                                                                </div>
-                                                            </div>
-                                                        </DialogContent>
-                                                    </Dialog>
+                                                `   <Link href={route('profile', user.id)}>
+                                                        <Button variant="outline" className="text-gray-300 border-gray-600 hover:bg-gray-700">
+                                                            View Profile
+                                                        </Button>
+                                                    </Link>
                                                     <Button onClick={() => handleRequestSession(user.id)} className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-300">
                                                         Request Session
                                                     </Button>
