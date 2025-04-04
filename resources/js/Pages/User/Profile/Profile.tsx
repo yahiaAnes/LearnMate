@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Com
 import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar';
 import { Badge } from '@/Components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/Components/ui/tabs';
-import { BookOpen, MessageSquare, Filter, Users, Calendar, Star, FileText, ArrowLeft } from 'lucide-react';
+import { BookOpen, MessageSquare, Filter, Users, Calendar, Star, FileText, ArrowLeft, ThumbsUp } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from '@inertiajs/react';
@@ -41,6 +41,18 @@ interface Request {
     partner: User;
 }
 
+interface RequestSession {
+    id: number;
+    subject: string;
+    description: string;
+    status: string;
+    comment: string;
+    review: number;
+    time: string;
+    user: User;
+    partner: User;
+}
+
 const collabTypes = {
     study_group: 'Study Group',
     project: 'Project',
@@ -52,7 +64,12 @@ const collabTypes = {
 
 const AnimatedCard = motion(Card);
 
-const ProfileHeader = ({ user }: { user: User }) => {
+const ProfileHeader = ({ user, requestSessions }: { user: User; requestSessions: RequestSession[] }) => {
+    const reviews = requestSessions.filter(session => session.review > 0);
+    const averageRating = reviews.length > 0 
+        ? reviews.reduce((acc, session) => acc + session.review, 0) / reviews.length 
+        : 0;
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -100,6 +117,10 @@ const ProfileHeader = ({ user }: { user: User }) => {
                                 <Badge variant="secondary" className="bg-blue-500/20 text-blue-400 border-blue-500/30">
                                     {user.level}
                                 </Badge>
+                                <Badge variant="secondary" className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">
+                                    <Star className="w-3 h-3 mr-1" />
+                                    {averageRating.toFixed(1)} ({reviews.length} reviews)
+                                </Badge>
                             </motion.div>
                         </div>
                     </div>
@@ -110,10 +131,11 @@ const ProfileHeader = ({ user }: { user: User }) => {
 };
 
 export default function Profile() {
-    const { user, collabs, requests } = usePage().props as unknown as { 
+    const { user, collabs, requests, requestSessions = [] } = usePage().props as unknown as { 
         user: User; 
         collabs: Collab[]; 
         requests: Request[]; 
+        requestSessions?: RequestSession[];
     };
 
     const [activeTab, setActiveTab] = useState('info');
@@ -142,7 +164,7 @@ export default function Profile() {
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="relative">
                         {/* Profile Header */}
-                        <ProfileHeader user={user} />
+                        <ProfileHeader user={user} requestSessions={requestSessions} />
 
                         {/* Profile Content */}
                         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
@@ -150,6 +172,7 @@ export default function Profile() {
                                 <TabsTrigger value="info" className="data-[state=active]:bg-gray-700">Profile Info</TabsTrigger>
                                 <TabsTrigger value="collabs" className="data-[state=active]:bg-gray-700">Collaborations</TabsTrigger>
                                 <TabsTrigger value="requests" className="data-[state=active]:bg-gray-700">Requests</TabsTrigger>
+                                <TabsTrigger value="reviews" className="data-[state=active]:bg-gray-700">Reviews</TabsTrigger>
                             </TabsList>
 
                             <AnimatePresence mode="wait">
@@ -277,6 +300,71 @@ export default function Profile() {
                                                 </CardContent>
                                             </AnimatedCard>
                                         ))}
+                                    </div>
+                                </TabsContent>
+
+                                <TabsContent value="reviews" className="space-y-4">
+                                    <div className="grid grid-cols-1 gap-6">
+                                        {requestSessions && requestSessions.filter(session => session.review > 0).length > 0 ? (
+                                            requestSessions
+                                                .filter(session => session.review > 0)
+                                                .map((session, index) => (
+                                                <AnimatedCard
+                                                    key={session.id}
+                                                    initial={{ opacity: 0, y: 20 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    exit={{ opacity: 0, y: -20 }}
+                                                    transition={{ delay: index * 0.1 }}
+                                                    className="bg-gray-800/50 backdrop-blur-md border-gray-700 hover:border-blue-500/50 transition-colors duration-300"
+                                                    whileHover={{ scale: 1.02 }}
+                                                >
+                                                    <CardHeader>
+                                                        <div className="flex items-center justify-between">
+                                                            <div className="flex items-center space-x-4">
+                                                                <Avatar className="w-10 h-10">
+                                                                    <AvatarImage src={session.partner.profile_image || undefined} />
+                                                                    <AvatarFallback className="bg-gray-700 text-gray-300">
+                                                                        {session.partner.name.charAt(0).toUpperCase()}
+                                                                    </AvatarFallback>
+                                                                </Avatar>
+                                                                <div>
+                                                                    <CardTitle className="text-white text-lg">{session.partner.name}</CardTitle>
+                                                                    <CardDescription>
+                                                                        {formatDistanceToNow(new Date(session.time), { addSuffix: true })}
+                                                                    </CardDescription>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex items-center space-x-1">
+                                                                {[...Array(5)].map((_, i) => (
+                                                                    <Star
+                                                                        key={i}
+                                                                        className={`w-4 h-4 ${
+                                                                            i < session.review
+                                                                                ? 'text-yellow-400 fill-yellow-400'
+                                                                                : 'text-gray-400'
+                                                                        }`}
+                                                                    />
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    </CardHeader>
+                                                    <CardContent>
+                                                        <p className="text-gray-300">{session.comment || 'No comment provided'}</p>
+                                                    </CardContent>
+                                                </AnimatedCard>
+                                            ))
+                                        ) : (
+                                            <Card className="bg-gray-800/50 backdrop-blur-md border-gray-700">
+                                                <CardContent className="pt-6 pb-4">
+                                                    <div className="flex flex-col items-center justify-center space-y-4">
+                                                        <ThumbsUp className="w-12 h-12 text-gray-400" />
+                                                        <p className="text-gray-400 text-center">
+                                                            No reviews yet. Be the first to review this user!
+                                                        </p>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        )}
                                     </div>
                                 </TabsContent>
                             </AnimatePresence>

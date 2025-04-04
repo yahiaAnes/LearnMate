@@ -53,4 +53,24 @@ class User extends Authenticatable
     {
         return $this->hasMany(Skill::class);
     }
+
+    public function requestSessions()
+    {
+        return $this->hasMany(RequestSession::class);
+    }
+
+    public function createdCollabs()
+    {
+        return $this->hasMany(Collab::class, 'creator_id');
+    }
+
+    public function partnerCollabs()
+    {
+        return $this->hasMany(Collab::class, 'partner_id');
+    }
+
+    public function getCollabsAttribute()
+    {
+        return $this->createdCollabs->merge($this->partnerCollabs);
+    }
 }

@@ -34,7 +34,7 @@ export default function Authenticated({
         { name: 'My Collaborations', href: route('collabs.index'), icon: Handshake },
         { name: 'Requests', href: route('requests.index'), icon: Bell },
         { name: 'Responses', href: route('responses.index'), icon: MessageSquare },
-        { name: 'Courses', href: route('dashboard'), icon: BookOpen },
+        { name: 'Courses', href: route('courses.index'), icon: BookOpen },
         { name: 'Messages', href: route('dashboard'), icon: MessageSquare },
         { name: 'Settings', href: route('dashboard'), icon: Settings },
         { name: 'Help', href: route('help'), icon: HelpCircle },

@@ -6,6 +6,7 @@ use App\Http\Controllers\SkillController;
 use App\Http\Controllers\CollabController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\ResponseController;
+use App\Http\Controllers\CourseController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -70,6 +71,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('responses', ResponseController::class);
     Route::post('/responses/{response}/cancel', [ResponseController::class, 'cancel'])->name('responses.cancel');
     Route::post('/responses/{response}/review', [ResponseController::class, 'review'])->name('responses.review');
+
+    // Courses routes
+    Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
+    Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show');
 });
 
 Route::get('/CompleteInfo',[UserController::class, 'CompleteInfo'])->middleware(['auth'])->name('CompleteInfo');
@@ -79,5 +84,6 @@ Route::post('/CompleteInfo/store_info/{id}', [UserController::class, 'storeInfo'
 Route::get('/help', function () {
     return Inertia::render('Help/Help');
 })->middleware(['auth', 'verified'])->name('help');
+
 
 require __DIR__.'/auth.php';
