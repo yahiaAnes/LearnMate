@@ -7,32 +7,24 @@ use App\Http\Controllers\CollabController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\ResponseController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\Auth\GoogleController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return Inertia::render('Welcome');
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/', function () {
-        return Inertia::render('Welcome', [
-            'canLogin' => Route::has('login'),
-            'canRegister' => Route::has('register'),
-            'laravelVersion' => Application::VERSION,
-            'phpVersion' => PHP_VERSION,
-        ]);
-    });
+//________________________ G O O G L E  A U T H  ______________________________________________
+
+Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+
+
+Route::middleware(['auth','verified'])->group(function () {
+   
 
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
@@ -61,6 +53,7 @@ Route::middleware('auth')->group(function () {
     // Collaboration routes
     Route::resource('collabs', CollabController::class);
     Route::post('/collabs/{collab}/accept', [CollabController::class, 'accept'])->name('collabs.accept');
+
     // Requests routes
     Route::resource('requests', RequestController::class);
     Route::post('/requests/store', [RequestController::class, 'store'])->name('requests.store');

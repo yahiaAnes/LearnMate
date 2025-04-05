@@ -248,7 +248,7 @@ export default function Welcome({ auth }: PageProps) {
                     </motion.div>
                 </div>
             </div>
-
+            
             {/* Footer */}
             <footer className="bg-black py-12">
                 <div className="container mx-auto px-4">
