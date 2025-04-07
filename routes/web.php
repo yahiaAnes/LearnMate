@@ -56,7 +56,7 @@ Route::middleware(['auth','verified'])->group(function () {
 
     // Requests routes
     Route::resource('requests', RequestController::class);
-    Route::post('/requests/store', [RequestController::class, 'store'])->name('requests.store');
+    Route::post('/requests/store', [RequestController::class, 'store'])->name('request.store');
     Route::post('/requests/{request}/accept', [RequestController::class, 'accept'])->name('requests.accept');
     Route::post('/requests/{request}/reject', [RequestController::class, 'reject'])->name('requests.reject');
 
