@@ -14,7 +14,7 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
-});
+})->name('welcome');
 
 
 //________________________ G O O G L E  A U T H  ______________________________________________
@@ -69,6 +69,22 @@ Route::middleware(['auth','verified'])->group(function () {
     Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
     Route::get('/courses/{course}', [CourseController::class, 'show'])->name('courses.show');
 });
+
+// All courses route
+Route::get('/All-courses', function () {
+    $courses = \App\Models\Course::all();
+
+    return Inertia::render('Main/Courses', [
+        'courses' => $courses,
+        'auth' => [
+            'user' => auth()->user() ? [
+                'name' => auth()->user()->name,
+                'email' => auth()->user()->email,
+            ] : null,
+        ],
+    ]);
+})->name('All-courses');
+
 
 Route::get('/CompleteInfo',[UserController::class, 'CompleteInfo'])->middleware(['auth'])->name('CompleteInfo');
 

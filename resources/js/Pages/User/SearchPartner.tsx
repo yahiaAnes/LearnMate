@@ -337,7 +337,7 @@ export default function SearchPartner() {
                                                 </div>
                                                 <div className="flex justify-between items-center pt-4">
                                                 `   <Link href={route('profile', user.id)}>
-                                                        <Button variant="outline" className="text-gray-300 border-gray-600 hover:bg-gray-700">
+                                                        <Button variant="outline" className="text-black border-gray-600 hover:bg-gray-700">
                                                             View Profile
                                                         </Button>
                                                     </Link>

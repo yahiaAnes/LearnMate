@@ -3,7 +3,7 @@ import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, usePage } from '@inertiajs/react';
-import { PropsWithChildren, ReactNode, useState } from 'react';
+import { PropsWithChildren, ReactNode, useState, useEffect } from 'react';
 import { 
   LayoutDashboard, 
   BookOpen, 
@@ -26,6 +26,24 @@ export default function Authenticated({
     const user = usePage().props.auth.user;
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+    useEffect(() => {
+        // Check if the screen is mobile (less than 768px) on initial render
+        const checkMobileScreen = () => {
+            setIsSidebarOpen(window.innerWidth >= 768);
+        };
+
+        // Set initial state
+        checkMobileScreen();
+
+        // Add event listener for window resize
+        window.addEventListener('resize', checkMobileScreen);
+
+        // Cleanup
+        return () => {
+            window.removeEventListener('resize', checkMobileScreen);
+        };
+    }, []);
 
     const menuItems = [
         { name: 'Dashboard', href: route('dashboard'), icon: LayoutDashboard },

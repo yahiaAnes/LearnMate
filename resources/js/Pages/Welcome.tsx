@@ -19,7 +19,7 @@ export default function Welcome({ auth }: PageProps) {
                             </span>
                         </div>
                         <div className="flex items-center space-x-6">
-                            <Link href="/courses" className="text-gray-300 hover:text-white transition-colors">
+                            <Link href="/All-courses" className="text-gray-300 hover:text-white transition-colors">
                                 Courses
                             </Link>
                             {auth.user ? (
