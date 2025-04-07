@@ -30,6 +30,11 @@ class User extends Authenticatable implements MustVerifyEmail
         'google_id',
     ];
 
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return true;
+    }
     /**
      * The attributes that should be hidden for serialization.
      *
