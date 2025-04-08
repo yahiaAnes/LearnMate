@@ -46,6 +46,6 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('complete.info', ['id' => $user->id]);
+        return redirect()->route('dashboard');
     }
 }

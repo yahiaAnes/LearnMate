@@ -47,9 +47,12 @@ class UserController extends Controller
 
     public function searchPartners()
     {
-        $users = User::select('id', 'name', 'email', 'profile_image', 'speciality', 'level', 'bio')
-            ->where('id', '!=', auth()->id()) // Exclude current user
-            ->get();
+        $users = User::where('id', '!=', auth()->id())
+                    ->where('university', '!=', null)
+                    ->where('speciality', '!=', null)
+                    ->where('level', '!=', null)
+                    ->where('bio', '!=', null)
+                    ->get();
         
         $collabs = Collab::with(['creator'])
             ->latest()
