@@ -4,11 +4,11 @@
 
 LearnMate is a modern, full-stack collaborative learning platform designed to connect students and facilitate peer-to-peer learning experiences. The platform enables students to find study partners, create collaboration opportunities, request study sessions, and access educational courses—all in one seamless environment.
 
-![Landing Page](docs/images/landing_page.png)
-![collab page](docs/images/profile.png)
+![Landing Page](docs/images/Landing_page.png)
+![collab page](docs/images/collab_page.png)
 ![Filament admin panel](docs/images/Filament_admin_panel.png)
 ![Dashbord user](docs/images/dashboard.png)
-![Courses Page](docs/images/courses.png)
+![Courses Page](docs/images/courses_page.png)
 ### Core Concept
 
 LearnMate bridges the gap between students seeking to learn and those willing to teach or collaborate. Whether you're looking for a study group, a mentor, a project partner, or someone to learn from, LearnMate provides the tools and community to make meaningful educational connections.
